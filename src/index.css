@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+/* Adding design tokens from the enhanced design brief */
+:root {
+  --background: #ecfeff; /* Light cyan background for clean look */
+  --foreground: #475569; /* Slate gray for primary text */
+  --card: #ffffff; /* White card background */
+  --card-foreground: #374151; /* Dark gray text on cards */
+  --popover: #ffffff; /* White popover background */
+  --popover-foreground: #475569; /* Slate gray text for popovers */
+  --primary: #164e63; /* Cyan-800 primary color */
+  --primary-foreground: #ffffff; /* White text on primary */
+  --secondary: #6366f1; /* Indigo accent color */
+  --secondary-foreground: #ffffff; /* White text on secondary */
+  --muted: #f8fafc; /* Very light slate for muted backgrounds */
+  --muted-foreground: #64748b; /* Medium slate for muted text */
+  --accent: #6366f1; /* Indigo accent color */
+  --accent-foreground: #ffffff; /* White text on accents */
+  --destructive: #dc2626; /* Red for destructive actions */
+  --destructive-foreground: #ffffff; /* White text on destructive */
+  --border: #d1d5db; /* Light gray borders */
+  --input: #ffffff; /* White input backgrounds */
+  --ring: rgba(22, 78, 99, 0.5); /* Primary color with opacity for focus rings */
+  --chart-1: #164e63; /* Primary color for charts */
+  --chart-2: #6366f1; /* Secondary color for charts */
+  --chart-3: #dc2626; /* Destructive color for charts */
+  --chart-4: #f59e0b; /* Amber for charts */
+  --chart-5: #475569; /* Slate for charts */
+  --radius: 0.75rem; /* Rounded corners */
+  --sidebar: #ffffff; /* White sidebar background */
+  --sidebar-foreground: #475569; /* Slate text in sidebar */
+  --sidebar-primary: #164e63; /* Primary color for sidebar highlights */
+  --sidebar-primary-foreground: #ffffff; /* White text for primary sidebar elements */
+  --sidebar-accent: #6366f1; /* Accent color for sidebar */
+  --sidebar-accent-foreground: #ffffff; /* White text for sidebar accents */
+  --sidebar-border: #d1d5db; /* Light gray border for sidebar */
+  --sidebar-ring: rgba(22, 78, 99, 0.5); /* Primary ring color for sidebar focus */
+}
+
+.dark {
+  --background: #0f172a; /* Dark slate background */
+  --foreground: #f1f5f9; /* Light slate text */
+  --card: #1e293b; /* Dark slate card background */
+  --card-foreground: #f1f5f9; /* Light text on cards */
+  --popover: #1e293b; /* Dark popover background */
+  --popover-foreground: #f1f5f9; /* Light text for popovers */
+  --primary: #0891b2; /* Lighter cyan for dark mode */
+  --primary-foreground: #ffffff; /* White text on primary */
+  --secondary: #818cf8; /* Lighter indigo for dark mode */
+  --secondary-foreground: #ffffff; /* White text on secondary */
+  --muted: #334155; /* Medium slate for muted backgrounds */
+  --muted-foreground: #94a3b8; /* Light slate for muted text */
+  --accent: #818cf8; /* Lighter indigo accent */
+  --accent-foreground: #ffffff; /* White text on accents */
+  --destructive: #ef4444; /* Lighter red for dark mode */
+  --destructive-foreground: #ffffff; /* White text on destructive */
+  --border: #334155; /* Medium slate borders */
+  --input: #1e293b; /* Dark input backgrounds */
+  --ring: rgba(8, 145, 178, 0.5); /* Primary color with opacity for focus rings */
+  --sidebar: #1e293b; /* Dark sidebar background */
+  --sidebar-foreground: #f1f5f9; /* Light text in sidebar */
+  --sidebar-primary: #0891b2; /* Primary color for sidebar highlights */
+  --sidebar-primary-foreground: #ffffff; /* White text for primary sidebar elements */
+  --sidebar-accent: #818cf8; /* Accent color for sidebar */
+  --sidebar-accent-foreground: #ffffff; /* White text for sidebar accents */
+  --sidebar-border: #334155; /* Medium slate border for sidebar */
+  --sidebar-ring: rgba(8, 145, 178, 0.5); /* Primary ring color for sidebar focus */
+}
+
+/* Adding custom cursor styles for drawing tools */
+.cursor-pen {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23164e63' d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E")
+    12 12, auto;
+}
+
+.cursor-highlighter {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%236366f1' d='M18.5 1.15L17.35 0l-8 8-1.5-1.5L6.5 7.85 8.85 10.2l-7.7 7.7c-.39.39-.39 1.02 0 1.41L2.56 20.72c.39.39 1.02.39 1.41 0l7.7-7.7L14.15 15.5 15.5 14.15 14 12.65l8-8z'/%3E%3C/svg%3E")
+    12 12, auto;
+}
+
+.cursor-eraser {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23dc2626' d='M16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.008 4.008 0 0 1-5.66 0L2.81 17c-.78-.79-.78-2.05 0-2.84l10.6-10.6c.79-.78 2.05-.78 2.83 0zM4.22 15.58l3.54 3.53c.78.79 2.04.79 2.83 0l3.53-3.53-6.36-6.36-3.54 3.36z'/%3E%3C/svg%3E")
+    12 12, auto;
+}
+
+/* Adding smooth transitions and hover effects */
+* {
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-track {
+  background: var(--muted);
+  height: 8px;
+  border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--primary);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--background);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--secondary);
+  transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-track {
+  background: var(--muted);
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background: var(--primary);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--background);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+/* Color input styling */
+input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 12px;
+}
+
+input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 12px;
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--input);
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--primary-foreground);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Focus styles */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
