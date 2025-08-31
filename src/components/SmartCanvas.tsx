@@ -166,13 +166,13 @@ function drawSmoothStroke(ctx: CanvasRenderingContext2D, pts: Point[], brushType
   if (pts.length < 2) return
   ctx.beginPath()
   ctx.moveTo(pts[0].x, pts[0].y)
-  if (brushType === BRUSH_TYPES.CALLIGRAPHY) {
+  if (brushType === "calligraphy") {
     for (let i = 1; i < pts.length - 1; i++) {
       const midX = (pts[i].x + pts[i + 1].x) / 2
       const midY = (pts[i].y + pts[i + 1].y) / 2
       ctx.quadraticCurveTo(pts[i].x, pts[i].y, midX, midY)
     }
-  } else if (brushType === BRUSH_TYPES.TEXTURED) {
+  } else if (brushType === "textured") {
     for (let i = 1; i < pts.length - 1; i++) {
       const noise = (Math.random() - 0.5) * 2
       const midX = (pts[i].x + pts[i + 1].x) / 2 + noise
@@ -234,7 +234,7 @@ function paintBackground(ctx: CanvasRenderingContext2D, w: number, h: number, bg
   ctx.fillStyle = "#ffffff"
   ctx.fillRect(0, 0, w, h)
 
-  if (bg === BACKGROUNDS.GRID) {
+  if (bg === "grid") {
     ctx.lineWidth = 1
     ctx.strokeStyle = "#e5e7eb"
     const gap = 32
@@ -248,7 +248,7 @@ function paintBackground(ctx: CanvasRenderingContext2D, w: number, h: number, bg
       ctx.lineTo(w, y)
     }
     ctx.stroke()
-  } else if (bg === BACKGROUNDS.RULED) {
+  } else if (bg === "ruled") {
     ctx.lineWidth = 1
     ctx.strokeStyle = "#c7d2fe"
     const gap = 36
@@ -263,7 +263,7 @@ function paintBackground(ctx: CanvasRenderingContext2D, w: number, h: number, bg
     ctx.moveTo(64.5, 0)
     ctx.lineTo(64.5, h)
     ctx.stroke()
-  } else if (bg === BACKGROUNDS.DOT) {
+  } else if (bg === "dot") {
     ctx.fillStyle = "#e5e7eb"
     const gap = 24
     for (let x = gap; x < w; x += gap) {
@@ -277,7 +277,7 @@ function paintBackground(ctx: CanvasRenderingContext2D, w: number, h: number, bg
   ctx.restore()
 }
 
-function useResizeObserver(ref: React.RefObject<HTMLElement>, cb: () => void) {
+function useResizeObserver(ref: React.RefObject<Element | null>, cb: () => void) {
   useEffect(() => {
     if (!ref.current) return
     const ro = new ResizeObserver(() => cb())
@@ -388,23 +388,23 @@ function ColorSwatch({ value, onChange }: { value: string; onChange: (hex: strin
 
 // --- Main Component ---
 export default function SmartCanvas() {
-  const wrapRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const previewRef = useRef<HTMLCanvasElement>(null)
+  const wrapRef = useRef<HTMLDivElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const previewRef = useRef<HTMLCanvasElement | null>(null)
 
   const [ops, setOps] = useState<Op[]>([])
   const [redo, setRedo] = useState<Op[]>([])
   const [layers, setLayers] = useState<Layer[]>([{ id: 0, name: "Layer 1", visible: true, opacity: 1 }])
   const [currentLayer, setCurrentLayer] = useState<number>(0)
 
-  const [tool, setTool] = useState<Tool>(TOOLS.PEN)
+  const [tool, setTool] = useState<Tool>("pen")
   const [color, setColor] = useState("#164e63")
   const [size, setSize] = useState(4)
   const [alpha, setAlpha] = useState(1)
   const [smooth, setSmooth] = useState(true)
-  const [brushType, setBrushType] = useState<string>(BRUSH_TYPES.SMOOTH)
+  const [brushType, setBrushType] = useState<string>("smooth")
   const [shapeAssist, setShapeAssist] = useState(true)
-  const [background, setBackground] = useState<string>(BACKGROUNDS.PLAIN)
+  const [background, setBackground] = useState<string>("plain")
 
   const [isDrawing, setIsDrawing] = useState(false)
   const [currentStroke, setCurrentStroke] = useState<StrokeOp | null>(null)
@@ -472,14 +472,14 @@ export default function SmartCanvas() {
       } else if (e.key === "Shift") setShiftKey(true)
       // quick tool shortcuts
       else if (!e.ctrlKey && !e.metaKey && !e.altKey) {
-        if (key === "v") setTool(TOOLS.SELECT)
-        if (key === "p") setTool(TOOLS.PEN)
-        if (key === "h") setTool(TOOLS.HIGHLIGHTER)
-        if (key === "e") setTool(TOOLS.ERASER)
-        if (key === "l") setTool(TOOLS.LINE)
-        if (key === "r") setTool(TOOLS.RECT)
-        if (key === "o") setTool(TOOLS.ELLIPSE)
-        if (key === "t") setTool(TOOLS.TEXT)
+        if (key === "v") setTool("select")
+        if (key === "p") setTool("pen")
+        if (key === "h") setTool("highlighter")
+        if (key === "e") setTool("eraser")
+        if (key === "l") setTool("line")
+        if (key === "r") setTool("rect")
+        if (key === "o") setTool("ellipse")
+        if (key === "t") setTool("text")
         if (key === "f") {
           e.preventDefault()
           toggleFullscreen()
@@ -500,21 +500,21 @@ export default function SmartCanvas() {
   // Fullscreen helpers
   const getToolLabel = (t: Tool) => {
     switch (t) {
-      case TOOLS.SELECT:
+      case "select":
         return "Select"
-      case TOOLS.PEN:
+      case "pen":
         return "Pen"
-      case TOOLS.HIGHLIGHTER:
+      case "highlighter":
         return "Highlighter"
-      case TOOLS.ERASER:
+      case "eraser":
         return "Eraser"
-      case TOOLS.LINE:
+      case "line":
         return "Line"
-      case TOOLS.RECT:
+      case "rect":
         return "Rectangle"
-      case TOOLS.ELLIPSE:
+      case "ellipse":
         return "Ellipse"
-      case TOOLS.TEXT:
+      case "text":
         return "Text"
       default:
         return "Unknown"
@@ -600,7 +600,7 @@ export default function SmartCanvas() {
               const p = pts[i]
               const midX = (prev.x + p.x) / 2
               const midY = (prev.y + p.y) / 2
-              ctx.lineWidth = base * (op.tool === TOOLS.ERASER ? 1 : 0.5 + 0.5 * (p.p ?? 0.8))
+              ctx.lineWidth = base * (op.tool === "eraser" ? 1 : 0.5 + 0.5 * (p.p ?? 0.8))
               ctx.quadraticCurveTo(prev.x, prev.y, midX, midY)
               prev = p
             }
@@ -656,6 +656,8 @@ export default function SmartCanvas() {
     return { x, y, p }
   }
 
+  const FREEHAND_TOOLS: Tool[] = ["pen", "highlighter", "eraser"]
+
   function pointerDown(e: React.PointerEvent) {
     if (e.button !== 0) return
     ;(e.target as HTMLElement).setPointerCapture?.(e.pointerId)
@@ -663,20 +665,20 @@ export default function SmartCanvas() {
     const pos = getPos(e)
 
     // Text tool: open editor at position
-    if (tool === TOOLS.TEXT) {
+    if (tool === "text") {
       setTextEditor({ visible: true, x: pos.x, y: pos.y, value: "" })
       return
     }
 
     setIsDrawing(true)
-    if ([TOOLS.PEN, TOOLS.HIGHLIGHTER, TOOLS.ERASER].includes(tool)) {
+    if (FREEHAND_TOOLS.includes(tool)) {
       const stroke: StrokeOp = {
         kind: "stroke",
         tool,
-        color: tool === TOOLS.ERASER ? "#000000" : color,
+        color: tool === "eraser" ? "#000000" : color,
         size,
-        alpha: tool === TOOLS.HIGHLIGHTER ? 0.3 : alpha,
-        composite: tool === TOOLS.ERASER ? "destination-out" : "source-over",
+        alpha: tool === "highlighter" ? 0.3 : alpha,
+        composite: tool === "eraser" ? "destination-out" : "source-over",
         points: [pos],
         smooth,
         brushType,
@@ -684,8 +686,8 @@ export default function SmartCanvas() {
       }
       setCurrentStroke(stroke)
       setOps((prev) => prev.concat(stroke))
-    } else if (tool !== TOOLS.SELECT) {
-      const shapeName = tool === TOOLS.LINE ? "line" : tool === TOOLS.RECT ? "rect" : "ellipse"
+    } else if (tool !== "select") {
+      const shapeName = tool === "line" ? "line" : tool === "rect" ? "rect" : "ellipse"
       const shape: ShapeOp = {
         kind: "shape",
         shape: shapeName as any,
@@ -927,50 +929,50 @@ export default function SmartCanvas() {
                 <IconButton
                   title="Select (V)"
                   icon={<MousePointer2 className="h-4 w-4" />}
-                  active={tool === TOOLS.SELECT}
-                  onClick={() => setTool(TOOLS.SELECT)}
+                  active={tool === "select"}
+                  onClick={() => setTool("select")}
                 />
                 <IconButton
                   title="Pen (P)"
                   icon={<Pencil className="h-4 w-4" />}
-                  active={tool === TOOLS.PEN}
-                  onClick={() => setTool(TOOLS.PEN)}
+                  active={tool === "pen"}
+                  onClick={() => setTool("pen")}
                 />
                 <IconButton
                   title="Highlighter (H)"
                   icon={<HighlighterIcon className="h-4 w-4" />}
-                  active={tool === TOOLS.HIGHLIGHTER}
-                  onClick={() => setTool(TOOLS.HIGHLIGHTER)}
+                  active={tool === "highlighter"}
+                  onClick={() => setTool("highlighter")}
                 />
                 <IconButton
                   title="Eraser (E)"
                   icon={<Eraser className="h-4 w-4" />}
-                  active={tool === TOOLS.ERASER}
-                  onClick={() => setTool(TOOLS.ERASER)}
+                  active={tool === "eraser"}
+                  onClick={() => setTool("eraser")}
                 />
                 <IconButton
                   title="Line (L)"
                   icon={<Minus className="h-4 w-4" />}
-                  active={tool === TOOLS.LINE}
-                  onClick={() => setTool(TOOLS.LINE)}
+                  active={tool === "line"}
+                  onClick={() => setTool("line")}
                 />
                 <IconButton
                   title="Rectangle (R)"
                   icon={<Square className="h-4 w-4" />}
-                  active={tool === TOOLS.RECT}
-                  onClick={() => setTool(TOOLS.RECT)}
+                  active={tool === "rect"}
+                  onClick={() => setTool("rect")}
                 />
                 <IconButton
                   title="Ellipse (O)"
                   icon={<Circle className="h-4 w-4" />}
-                  active={tool === TOOLS.ELLIPSE}
-                  onClick={() => setTool(TOOLS.ELLIPSE)}
+                  active={tool === "ellipse"}
+                  onClick={() => setTool("ellipse")}
                 />
                 <IconButton
                   title="Text (T)"
                   icon={<Type className="h-4 w-4" />}
-                  active={tool === TOOLS.TEXT}
-                  onClick={() => setTool(TOOLS.TEXT)}
+                  active={tool === "text"}
+                  onClick={() => setTool("text")}
                 />
               </div>
             </div>
@@ -1000,9 +1002,9 @@ export default function SmartCanvas() {
                     onChange={(e) => setBrushType(e.target.value)}
                     className="w-full px-3 py-2 text-sm rounded-md border border-border bg-input"
                   >
-                    <option value={BRUSH_TYPES.SMOOTH}>Smooth</option>
-                    <option value={BRUSH_TYPES.TEXTURED}>Textured</option>
-                    <option value={BRUSH_TYPES.CALLIGRAPHY}>Calligraphy</option>
+                    <option value="smooth">Smooth</option>
+                    <option value="textured">Textured</option>
+                    <option value="calligraphy">Calligraphy</option>
                   </select>
                 </div>
               </div>
@@ -1065,10 +1067,10 @@ export default function SmartCanvas() {
                 className="w-full px-3 py-2 text-sm rounded-md border border-border bg-input"
                 aria-label="Background pattern"
               >
-                <option value={BACKGROUNDS.PLAIN}>Plain</option>
-                <option value={BACKGROUNDS.GRID}>Grid</option>
-                <option value={BACKGROUNDS.RULED}>Ruled</option>
-                <option value={BACKGROUNDS.DOT}>Dot Grid</option>
+                <option value="plain">Plain</option>
+                <option value="grid">Grid</option>
+                <option value="ruled">Ruled</option>
+                <option value="dot">Dot Grid</option>
               </select>
             </div>
 
