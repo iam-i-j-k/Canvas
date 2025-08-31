@@ -23,6 +23,8 @@ import {
   PanelLeft,
   Save,
   FileUp,
+  Maximize2,
+  Minimize2,
 } from "lucide-react"
 
 // --- Types & Constants ---
@@ -291,9 +293,12 @@ function IconButton(
   const { active, icon, className = "", ...rest } = props
   return (
     <button
+      type="button"
+      aria-pressed={!!active}
+      data-state={active ? "on" : "off"}
       {...rest}
       className={`inline-flex h-9 w-9 items-center justify-center rounded-md border text-sm transition-colors
-      ${active ? "bg-primary text-primary-foreground border-primary" : "bg-card text-card-foreground border-border hover:bg-accent hover:text-accent-foreground"}
+      ${active ? "bg-primary text-primary-foreground border-primary ring-2 ring-primary" : "bg-card text-card-foreground border-border hover:bg-accent hover:text-accent-foreground"}
       ${className}`}
     >
       {icon}
@@ -406,6 +411,7 @@ export default function SmartCanvas() {
   const [currentShape, setCurrentShape] = useState<ShapeOp | null>(null)
   const [shiftKey, setShiftKey] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   // floating text editor
   const [textEditor, setTextEditor] = useState<{ visible: boolean; x: number; y: number; value: string }>({
@@ -474,6 +480,10 @@ export default function SmartCanvas() {
         if (key === "r") setTool(TOOLS.RECT)
         if (key === "o") setTool(TOOLS.ELLIPSE)
         if (key === "t") setTool(TOOLS.TEXT)
+        if (key === "f") {
+          e.preventDefault()
+          toggleFullscreen()
+        }
       }
     }
     const onUp = (e: KeyboardEvent) => {
@@ -485,6 +495,57 @@ export default function SmartCanvas() {
       window.removeEventListener("keydown", onKey)
       window.removeEventListener("keyup", onUp)
     }
+  }, [])
+
+  // Fullscreen helpers
+  const getToolLabel = (t: Tool) => {
+    switch (t) {
+      case TOOLS.SELECT:
+        return "Select"
+      case TOOLS.PEN:
+        return "Pen"
+      case TOOLS.HIGHLIGHTER:
+        return "Highlighter"
+      case TOOLS.ERASER:
+        return "Eraser"
+      case TOOLS.LINE:
+        return "Line"
+      case TOOLS.RECT:
+        return "Rectangle"
+      case TOOLS.ELLIPSE:
+        return "Ellipse"
+      case TOOLS.TEXT:
+        return "Text"
+      default:
+        return "Unknown"
+    }
+  }
+
+  const toggleFullscreen = async () => {
+    const el = wrapRef.current
+    if (!el) return
+    try {
+      if (!document.fullscreenElement) {
+        await el.requestFullscreen()
+      } else {
+        await document.exitFullscreen()
+      }
+    } catch (err) {
+      // optional: surface error to user or console
+      // console.error("[v0] Fullscreen error:", err)
+    }
+  }
+
+  useEffect(() => {
+    const onFsChange = () => {
+      const el = wrapRef.current
+      const fs = !!document.fullscreenElement && el === document.fullscreenElement
+      setIsFullscreen(fs)
+      // ensure canvases are resized to the new dimensions
+      resizeCanvas()
+    }
+    document.addEventListener("fullscreenchange", onFsChange)
+    return () => document.removeEventListener("fullscreenchange", onFsChange)
   }, [])
 
   // Rendering
@@ -1077,6 +1138,18 @@ export default function SmartCanvas() {
                 >
                   <Trash2 className="h-4 w-4" /> Clear
                 </button>
+                {/* Current tool label */}
+                <div
+                  className="hidden md:flex items-center gap-2 ml-2"
+                  aria-live="polite"
+                  aria-atomic="true"
+                  title="Current tool"
+                >
+                  <span className="text-xs text-muted-foreground">Tool:</span>
+                  <span className="px-2 py-1 text-xs rounded-md border border-border bg-muted/30">
+                    {getToolLabel(tool)}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -1123,6 +1196,24 @@ export default function SmartCanvas() {
                 title="Export PNG"
               >
                 <Download className="h-4 w-4" /> PNG
+              </button>
+
+              {/* Fullscreen toggle */}
+              <button
+                onClick={toggleFullscreen}
+                aria-pressed={isFullscreen}
+                className="inline-flex items-center gap-1 px-3 h-9 rounded-md border border-border hover:bg-accent hover:text-accent-foreground"
+                title="Fullscreen (F)"
+              >
+                {isFullscreen ? (
+                  <>
+                    <Minimize2 className="h-4 w-4" /> Exit Fullscreen
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="h-4 w-4" /> Fullscreen
+                  </>
+                )}
               </button>
             </div>
           </div>
