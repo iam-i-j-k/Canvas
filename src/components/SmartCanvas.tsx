@@ -39,18 +39,7 @@ const TOOLS = {
   SELECT: "select",
 } as const
 
-const BACKGROUNDS = {
-  PLAIN: "plain",
-  GRID: "grid",
-  RULED: "ruled",
-  DOT: "dot",
-} as const
 
-const BRUSH_TYPES = {
-  SMOOTH: "smooth",
-  TEXTURED: "textured",
-  CALLIGRAPHY: "calligraphy",
-} as const
 
 type Tool = (typeof TOOLS)[keyof typeof TOOLS]
 
